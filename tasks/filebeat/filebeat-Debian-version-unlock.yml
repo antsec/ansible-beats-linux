@@ -1,0 +1,11 @@
+---
+- name: Debian - unhold filebeat version
+  become: true
+  command: apt-mark unhold filebeat
+  register: unhold_filebeat_result
+  changed_when: "unhold_filebeat_result.stdout != 'filebeat was already not hold.'"
+
+- name: Debian - unhold filebeat version with aptitude
+  become: true
+  command: aptitude unhold filebeat
+  register: aptitude_unhold_filebeat_result

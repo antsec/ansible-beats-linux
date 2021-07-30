@@ -1,0 +1,24 @@
+---
+#Add the auditbeat user before installing from packages.
+- name: Auditbeat-optional-user - Ensure optional auditbeat group is created with the correct id.
+  become: true
+  #Restart if these change
+  notify: restart auditbeat
+  group:
+    state: present
+    name: "{{ ab_group }}"
+    system: yes
+    gid: "{{ ab_group_id }}"
+
+- name: Auditbeat-optional-user - Ensure optional auditbeat user is created with the correct id.
+  become: true
+  #Restart if these change
+  notify: restart auditbeat
+  user:
+    state: present
+    name: "{{ ab_user }}"
+    comment: auditbeat system user
+    system: yes
+    createhome: no
+    uid: "{{ ab_user_id }}"
+    group: "{{ ab_group }}"

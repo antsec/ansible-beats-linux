@@ -1,0 +1,18 @@
+- module: system
+{% if fb_system['enable_syslog'] %}
+  syslog:
+    enabled: true
+{% if fb_system['system_var_paths'] is defined %}
+    var.paths: [ {{ fb_system['system_var_paths'] }} ]
+{% endif %}
+{% else %}
+  syslog:
+    enabled: false
+{% endif %}
+{% if fb_system['enable_auth'] %}
+  auth:
+    enabled: true
+{% else %}
+  auth:
+    enabled: false
+{% endif %}

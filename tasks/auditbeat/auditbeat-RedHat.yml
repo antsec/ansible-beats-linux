@@ -1,0 +1,31 @@
+---
+- name: Auditbeat-RedHat - Ensure libselinux-python on CentOS 6.x
+  become: true
+  yum: name=libselinux-python state=present update_cache=yes
+  when: ( ansible_distribution == "CentOS" ) and ( ansible_distribution_major_version == "6" )
+
+- name: Auditbeat-RedHat - RedHat - add auditbeat repo
+  become: true
+  template: src=elastic.repo.j2 dest=/etc/yum.repos.d/auditbeat-{{ ab_major_version }}.repo
+  when: ab_use_repository
+
+- name: Auditbeat-RedHat - RedHat - include versionlock
+  include: auditbeat-RedHat-version-lock.yml
+  when: ab_version_lock
+
+- name: Auditbeat-RedHat - RedHat - Install auditbeat
+  become: true
+  yum: name=auditbeat{% if ab_version is defined and ab_version != ""  %}-{{ ab_version }}{% endif %} state=present update_cache=yes
+  when: ab_use_repository
+  register: redhat_auditbeat_install_from_repo
+  notify: restart auditbeat
+  until: '"failed" not in redhat_auditbeat_install_from_repo'
+  retries: 5
+  delay: 10
+
+- name: Auditbeat-RedHat - RedHat - Install auditbeat from url
+  become: true
+  yum: name={% if ab_custom_package_url is defined %}{{ ab_custom_package_url }}{% else %}{{ ab_package_url }}-{{ ab_version }}.noarch.rpm{% endif %} state=present
+  when: not ab_use_repository
+  register: auditbeat_install_from_package
+  notify: restart auditbeat

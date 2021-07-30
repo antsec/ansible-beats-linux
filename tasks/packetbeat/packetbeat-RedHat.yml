@@ -1,0 +1,31 @@
+---
+- name: Ensure libselinux-python on CentOS 6.x
+  become: true
+  yum: name=libselinux-python state=present update_cache=yes
+  when: ( ansible_distribution == "CentOS" ) and ( ansible_distribution_major_version == "6" )
+
+- name: RedHat - add packetbeat repo
+  become: true
+  template: src=elastic.repo.j2 dest=/etc/yum.repos.d/packetbeat-{{ pb_major_version }}.repo
+  when: pb_use_repository
+
+- name: RedHat - include versionlock
+  include: packetbeat-RedHat-version-lock.yml
+  when: pb_version_lock
+
+- name: RedHat - Install packetbeat
+  become: true
+  yum: name=packetbeat{% if pb_version is defined and pb_version != ""  %}-{{ pb_version }}{% endif %} state=present update_cache=yes
+  when: pb_use_repository
+  register: redhat_packetbeat_install_from_repo
+  notify: restart packetbeat
+  until: '"failed" not in redhat_packetbeat_install_from_repo'
+  retries: 5
+  delay: 10
+
+- name: RedHat - Install packetbeat from url
+  become: true
+  yum: name={% if pb_custom_package_url is defined %}{{ pb_custom_package_url }}{% else %}{{ pb_package_url }}-{{ pb_version }}.noarch.rpm{% endif %} state=present
+  when: not pb_use_repository
+  register: packetbeat_install_from_package
+  notify: restart packetbeat

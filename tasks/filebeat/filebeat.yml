@@ -1,0 +1,13 @@
+---
+
+- name: Include optional user and group creation.
+  when: (ls_user_id is defined) and (ls_group_id is defined)
+  include: filebeat-optional-user.yml
+
+- name: Include specific filebeat
+  include: filebeat-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Include specific filebeat
+  include: filebeat-RedHat.yml
+  when: ansible_os_family == 'RedHat'

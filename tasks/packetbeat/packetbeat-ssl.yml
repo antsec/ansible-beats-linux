@@ -1,0 +1,68 @@
+- name: Check if {{ssl_config['directory']}} folder exists
+  file:
+    path: "{{ssl_config['directory']}}"
+    state: directory
+    owner: "{{ pb_user }}"
+    group: "{{ pb_group }}"
+    mode: 0755
+  become: true
+  register: pb_ssl_folder
+
+### Must also check if hash is correct, because it can be an old certificate
+# - name: Verify if Beats collectors cert is present
+#   stat:
+#     path: "{{ssl_config['directory']}}/certificate.crt"
+#   become: true
+#   become_user: "{{ pb_user }}"
+#   register: pb_ssl_cert_present
+#   when: ssl_config is defined
+
+# - name: Verify if Beats collectors key is present
+#   stat:
+#     path: "{{ssl_config['directory']}}/certificate.key"
+#   become: true
+#   become_user: "{{ pb_user }}"
+#   register: pb_ssl_key_present
+#   when: ssl_config is defined
+
+- name: Copy certificate for Beats collectors
+  copy:
+    src: "{{ssl_config['cert']}}"
+    dest: "{{ssl_config['directory']}}/"
+    owner: "{{ pb_user }}"
+    group: "{{ pb_group }}"
+    mode: 0644
+  become: true
+  # when: not pb_ssl_cert_present.stat.exists
+  register: pb_ssl_cert_copied
+  notify: restart packetbeat
+
+- name: Copy certificate key for Beats collectors
+  copy:
+    src: "{{ssl_config['key']}}"
+    dest: "{{ssl_config['directory']}}/"
+    owner: "{{ pb_user }}"
+    group: "{{ pb_group }}"
+    mode: 0600
+  become: true
+  # when: not pb_ssl_key_present.stat.exists
+  register: pb_ssl_key_copied
+  notify: restart packetbeat
+
+# - name: Verify if Beats collectors CA cert is present
+#   stat:
+#     path: "{{ssl_config['cacerts']}}"
+#   become: true
+#   become_user: "{{ pb_user }}"
+#   register: pb_ssl_ca_cert_present
+
+- name: Copy CA certificate to ssl folder
+  become: true
+  copy:
+    src: "{{ssl_config['cacerts']}}"
+    dest: "{{ssl_config['directory']}}/"
+    owner: "{{ pb_user }}"
+    group: "{{ pb_group }}"
+    mode: 0644
+  # when: not pb_ssl_ca_cert_present.stat.exists
+  notify: restart packetbeat

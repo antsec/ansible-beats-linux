@@ -1,0 +1,34 @@
+---
+# Configure metricbeat Node
+
+#Create required directories
+# - name: Create Directories
+#   become: true
+#   file: path={{ item }} state=directory owner={{ mb_user }} group={{ mb_group }}
+#   with_items:
+#     - "{{pid_dir}}"
+#     - "{{log_dir}}"
+#     - "{{conf_dir}}"
+
+#Copy the config template
+- name: Metricbeat-config - Copy Configuration File
+  become: true
+  template: src=metricbeat/metricbeat.yml.j2 dest={{conf_dir}}/metricbeat.yml owner={{ mb_user }} group={{ mb_group }} mode=0644 force=yes
+  register: system_change
+  notify: restart metricbeat
+
+- name: Metricbeat-config - Create empty default environment file
+  become: true
+  changed_when: False
+  copy:
+    dest: /etc/default/metricbeat
+    content: ''
+  when: ansible_os_family == 'Debian'
+
+- name: Metricbeat-config - Create empty default environment file
+  become: true
+  changed_when: False
+  copy:
+    dest: /etc/sysconfig/metricbeat
+    content: ''
+  when: ansible_os_family == 'RedHat'

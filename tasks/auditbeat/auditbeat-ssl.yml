@@ -1,0 +1,68 @@
+- name: Auditbeat-ssl - Check if {{ssl_config['directory']}} folder exists
+  file:
+    path: "{{ssl_config['directory']}}"
+    state: directory
+    owner: "{{ ab_user }}"
+    group: "{{ ab_group }}"
+    mode: 0755
+  become: true
+  register: ab_ssl_folder
+
+### Must also check if hash is correct, because it can be an old certificate
+# - name: Auditbeat-ssl - Verify if Beats collectors cert is present
+#   stat:
+#     path: "{{ssl_config['directory']}}/certificate.crt"
+#   become: true
+#   become_user: "{{ ab_user }}"
+#   register: ab_ssl_cert_present
+#   when: ssl_config is defined
+
+# - name: Auditbeat-ssl - Verify if Beats collectors key is present
+#   stat:
+#     path: "{{ssl_config['directory']}}/certificate.key"
+#   become: true
+#   become_user: "{{ ab_user }}"
+#   register: ab_ssl_key_present
+#   when: ssl_config is defined
+
+- name: Auditbeat-ssl - Copy certificate for Beats collectors
+  copy:
+    src: "{{ssl_config['cert']}}"
+    dest: "{{ssl_config['directory']}}/"
+    owner: "{{ ab_user }}"
+    group: "{{ ab_group }}"
+    mode: 0644
+  become: true
+  # when: not ab_ssl_cert_present.stat.exists
+  register: ab_ssl_cert_copied
+  notify: restart auditbeat
+
+- name: Auditbeat-ssl - Copy certificate key for Beats collectors
+  copy:
+    src: "{{ssl_config['key']}}"
+    dest: "{{ssl_config['directory']}}/"
+    owner: "{{ ab_user }}"
+    group: "{{ ab_group }}"
+    mode: 0600
+  become: true
+  # when: not ab_ssl_key_present.stat.exists
+  register: ab_ssl_key_copied
+  notify: restart auditbeat
+
+# - name: Auditbeat-ssl - Verify if Beats collectors CA cert is present
+#   stat:
+#     path: "{{ssl_config['cacerts']}}"
+#   become: true
+#   become_user: "{{ ab_user }}"
+#   register: ab_ssl_ca_cert_present
+
+- name: Auditbeat-ssl - Copy CA certificate to ssl folder
+  become: true
+  copy:
+    src: "{{ssl_config['cacerts']}}"
+    dest: "{{ssl_config['directory']}}/"
+    owner: "{{ ab_user }}"
+    group: "{{ ab_group }}"
+    mode: 0644
+  # when: not ab_ssl_ca_cert_present.stat.exists
+  notify: restart auditbeat

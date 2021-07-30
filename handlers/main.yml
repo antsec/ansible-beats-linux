@@ -1,0 +1,38 @@
+
+- name: reload systemd configuration
+  become: true
+  command: systemctl daemon-reload
+
+# Restart service and ensure it is enabled
+
+- name: restart filebeat
+  become: true
+  service: name=filebeat state=restarted enabled=yes
+  when:
+    - fb_restart_on_change
+    - fb_start_service
+  register: fb_restarted
+
+- name: restart packetbeat
+  become: true
+  service: name=packetbeat state=restarted enabled=yes
+  when:
+    - pb_restart_on_change
+    - pb_start_service
+  register: pb_restarted
+
+- name: restart metricbeat
+  become: true
+  service: name=metricbeat state=restarted enabled=yes
+  when:
+    - mb_restart_on_change
+    - mb_start_service
+  register: mb_restarted
+
+- name: restart auditbeat
+  become: true
+  service: name=auditbeat state=restarted enabled=yes
+  when:
+    - ab_restart_on_change
+    - ab_start_service
+  register: ab_restarted

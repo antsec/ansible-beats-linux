@@ -1,0 +1,10 @@
+---
+- name: Debian - unhold packetbeat version
+  become: true
+  command: apt-mark unhold packetbeat
+  register: unhold_packetbeat_result
+  changed_when: "unhold_packetbeat_result.stdout != 'packetbeat was already not hold.'"
+- name: Debian - unhold packetbeat version with aptitude
+  become: true
+  command: aptitude unhold packetbeat
+  register: aptitude_unhold_packetbeat_result

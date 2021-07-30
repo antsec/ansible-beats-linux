@@ -1,0 +1,29 @@
+---
+- name: Auditbeat-Main - check-set-parameters
+  include: auditbeat-parameters.yml
+  tags:
+      - always
+
+- name: Auditbeat-Main - include auditbeat.yml
+  include: auditbeat.yml
+  tags:
+      - install
+
+- name: Auditbeat-Main - include auditbeat-config.yml
+  include: auditbeat-config.yml
+  tags:
+      - config
+
+  #We always execute xpack as we may need to remove features
+- name: Auditbeat-Main - include auditbeat-ssl.yml
+  include: auditbeat-ssl.yml
+  tags:
+      - ssl
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: Auditbeat-Main - Make sure auditbeat is started
+  service: name=auditbeat state=restarted enabled=yes
+  become: true
+  when: ab_start_service

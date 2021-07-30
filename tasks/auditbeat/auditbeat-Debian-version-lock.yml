@@ -1,0 +1,10 @@
+---
+- name: Auditbeat-Debian-version-lock - Debian - hold auditbeat version
+  become: true
+  command: apt-mark hold auditbeat
+  register: hold_auditbeat_result
+  changed_when: "hold_auditbeat_result.stdout != 'auditbeat was already set on hold.'"
+- name: Auditbeat-Debian-version-lock - Debian - hold auditbeat version with aptitude
+  become: true
+  command: aptitude hold auditbeat
+  register: aptitude_hold_auditbeat_result

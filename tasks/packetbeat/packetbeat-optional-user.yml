@@ -1,0 +1,24 @@
+---
+#Add the packetbeat user before installing from packages.
+- name: Ensure optional packetbeat group is created with the correct id.
+  become: true
+  #Restart if these change
+  notify: restart packetbeat
+  group:
+    state: present
+    name: "{{ pb_group }}"
+    system: yes
+    gid: "{{ pb_group_id }}"
+
+- name: Ensure optional packetbeat user is created with the correct id.
+  become: true
+  #Restart if these change
+  notify: restart packetbeat
+  user:
+    state: present
+    name: "{{ pb_user }}"
+    comment: packetbeat system user
+    system: yes
+    createhome: no
+    uid: "{{ pb_user_id }}"
+    group: "{{ pb_group }}"

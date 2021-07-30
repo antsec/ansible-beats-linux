@@ -1,0 +1,7 @@
+---
+- name: RedHat - install yum-version-lock
+  become: true
+  yum: name=yum-plugin-versionlock state=present update_cache=yes
+- name: RedHat - lock packetbeat version
+  become: true
+  shell: yum versionlock delete 0:packetbeat* ; yum versionlock add packetbeat{% if ls_version is defined and ls_version != "" %}-{{ ls_version }}{% endif %}

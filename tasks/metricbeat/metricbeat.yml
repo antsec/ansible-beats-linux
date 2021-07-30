@@ -1,0 +1,13 @@
+---
+
+- name: Metricbeat - Include optional user and group creation.
+  when: (ls_user_id is defined) and (ls_group_id is defined)
+  include: metricbeat-optional-user.yml
+
+- name: Metricbeat - Include specific metricbeat
+  include: metricbeat-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Metricbeat - Include specific metricbeat
+  include: metricbeat-RedHat.yml
+  when: ansible_os_family == 'RedHat'

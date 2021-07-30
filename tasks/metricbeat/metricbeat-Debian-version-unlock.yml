@@ -1,0 +1,10 @@
+---
+- name: Metricbeat-Debian-version-unlock - Debian - unhold metricbeat version
+  become: true
+  command: apt-mark unhold metricbeat
+  register: unhold_metricbeat_result
+  changed_when: "unhold_metricbeat_result.stdout != 'metricbeat was already not hold.'"
+- name: Metricbeat-Debian-version-unlock - Debian - unhold metricbeat version with aptitude
+  become: true
+  command: aptitude unhold metricbeat
+  register: aptitude_unhold_metricbeat_result

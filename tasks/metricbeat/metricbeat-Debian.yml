@@ -1,0 +1,58 @@
+---
+
+- name: Metricbeat-Debian - set fact force_install to no
+  set_fact: force_install=no
+
+- name: Metricbeat-Debian - set fact force_install to yes
+  set_fact: force_install=yes
+  when: mb_allow_downgrades
+
+- name: Metricbeat-Debian - Debian - Install apt-transport-https to support https APT downloads
+  become: true
+  apt: name=apt-transport-https state=present
+  when: mb_use_repository
+
+- name: Metricbeat-Debian - Debian - Add Elastic repository key
+  become: true
+  apt_key: url="{{ mb_apt_key }}" state=present
+  when: mb_use_repository and mb_apt_key
+  tags: 
+    - no_apt
+
+- name: Metricbeat-Debian - Debian - Add elastic repository
+  become: true
+  apt_repository: repo={{ item.repo }} state={{ item.state}}
+  with_items:
+    - { repo: "{{ mb_apt_url_old }}", state: "absent" }
+    - { repo: "{{ mb_apt_url }}", state: "present" }
+  when: mb_use_repository
+  tags: 
+    - no_apt
+
+- name: Metricbeat-Debian - Debian - Remove version lock when upgrading
+  include: metricbeat-Debian-version-unlock.yml
+  when: mb_upgrade
+
+- name: Metricbeat-Debian - Debian - Ensure metricbeat is installed
+  become: true
+  apt: name=metricbeat{% if mb_version is defined and mb_version != "" %}={{ mb_version }}{% endif %} state=present force={{force_install}} allow_unauthenticated={{ 'no' if mb_apt_key else 'yes' }} cache_valid_time=86400
+  when: mb_use_repository
+  register: debian_metricbeat_install_from_repo
+  notify: restart metricbeat
+  tags: 
+    - no_apt
+
+- name: Metricbeat-Debian - Debian - Include versionlock
+  include: metricbeat-Debian-version-lock.yml
+  when: mb_version_lock
+
+- name: Metricbeat-Debian - Debian - Download metricbeat from url
+  get_url: url={% if mb_custom_package_url is defined %}{{ mb_custom_package_url }}{% else %}{{ mb_package_url }}-{{ mb_version }}.deb{% endif %} dest=/tmp/metricbeat-{{ mb_version }}.deb validate_certs=no
+  when: not mb_use_repository
+
+- name: Metricbeat-Debian - Debian - Ensure metricbeat is installed from downloaded package
+  become: true
+  apt: deb=/tmp/metricbeat-{{ mb_version }}.deb
+  when: not mb_use_repository
+  register: metricbeat_install_from_package
+  notify: restart metricbeat

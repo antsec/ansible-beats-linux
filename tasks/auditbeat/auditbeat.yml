@@ -1,0 +1,13 @@
+---
+
+- name: Auditbeat - Include optional user and group creation.
+  when: (ls_user_id is defined) and (ls_group_id is defined)
+  include: auditbeat-optional-user.yml
+
+- name: Auditbeat - Include specific auditbeat
+  include: auditbeat-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Auditbeat - Include specific auditbeat
+  include: auditbeat-RedHat.yml
+  when: ansible_os_family == 'RedHat'

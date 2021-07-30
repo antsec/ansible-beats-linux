@@ -1,0 +1,8 @@
+---
+ls_package_url: "https://artifacts.elastic.co/downloads/logstash/logstash"
+ls_conf_dir: "/etc/logstash"
+sysd_script: "/usr/lib/systemd/system/logstash.service"
+init_script: "/etc/init.d/logstash"
+#add supported features here
+supported_xpack_features: ["alerting","monitoring","graph","security"]
+reserved_xpack_users: ["elastic","logstash","logstash_system"]

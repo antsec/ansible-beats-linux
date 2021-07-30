@@ -1,0 +1,29 @@
+---
+- name: check-set-parameters
+  include: filebeat-parameters.yml
+  tags:
+      - always
+
+- name: include filebeat.yml
+  include: filebeat.yml
+  tags:
+      - install
+
+- name: include filebeat-config.yml
+  include: filebeat-config.yml
+  tags:
+      - config
+
+  #We always execute xpack as we may need to remove features
+- name: include filebeat-ssl.yml
+  include: filebeat-ssl.yml
+  tags:
+      - ssl
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: Make sure filebeat is started
+  service: name=filebeat state=restarted enabled=yes
+  become: true
+  when: fb_start_service

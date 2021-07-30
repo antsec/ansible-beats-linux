@@ -1,0 +1,10 @@
+---
+- name: Auditbeat-Debian-version-unlock - Debian - unhold auditbeat version
+  become: true
+  command: apt-mark unhold auditbeat
+  register: unhold_auditbeat_result
+  changed_when: "unhold_auditbeat_result.stdout != 'auditbeat was already not hold.'"
+- name: Auditbeat-Debian-version-unlock - Debian - unhold auditbeat version with aptitude
+  become: true
+  command: aptitude unhold auditbeat
+  register: aptitude_unhold_auditbeat_result

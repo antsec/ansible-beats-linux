@@ -1,0 +1,29 @@
+---
+- name: check-set-parameters
+  include: packetbeat-parameters.yml
+  tags:
+      - always
+
+- name: include packetbeat.yml
+  include: packetbeat.yml
+  tags:
+      - install
+
+- name: include packetbeat-config.yml
+  include: packetbeat-config.yml
+  tags:
+      - config
+
+  #We always execute xpack as we may need to remove features
+- name: include packetbeat-ssl.yml
+  include: packetbeat-ssl.yml
+  tags:
+      - ssl
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: Make sure packetbeat is started
+  service: name=packetbeat state=restarted enabled=yes
+  become: true
+  when: pb_start_service

@@ -1,0 +1,8 @@
+---
+- name: Auditbeat-RedHat-version-lock - RedHat - install yum-version-lock
+  become: true
+  yum: name=yum-plugin-versionlock state=present update_cache=yes
+
+- name: Auditbeat-RedHat-version-lock - RedHat - lock auditbeat version
+  become: true
+  shell: yum versionlock delete 0:auditbeat* ; yum versionlock add auditbeat{% if ls_version is defined and ls_version != "" %}-{{ ls_version }}{% endif %}

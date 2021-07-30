@@ -1,0 +1,74 @@
+name: {{ fb_name }}
+
+{% if fb_fields is defined %}
+fields:
+  {{ fb_fields | to_nice_yaml }}
+{% endif %}
+
+#============================= Filebeat inputs ===============================
+{% if fb_docker_input %}
+filebeat.inputs:
+  - type: docker
+    containers.ids: '*'
+    cri.parse_flags: true
+{% endif %}
+
+#============================= Filebeat modules ===============================
+
+filebeat.config.modules:
+  # Glob pattern for configuration loading
+  path: ${path.config}/modules.d/*.yml
+
+  # Set to true to enable config reloading
+  reload.enabled: false
+
+  # Period on which files under path should be checked for changes
+  #reload.period: 10s
+
+#============================= Processors ===============================
+processors:
+- add_host_metadata:
+    netinfo.enabled: true
+{% if fb_docker_input and not fb_kubernetes_metadata %}
+- add_docker_metadata:
+    host: "unix:///var/run/docker.sock"
+{% elif fb_docker_input and fb_kubernetes_metadata %}
+- add_kubernetes_metadata:
+    in_cluster: false
+{% endif %}
+
+#================================ Outputs =====================================
+#----------------------------- Logstash output --------------------------------
+{% if output is defined %}
+{% if output['type'] == 'logstash' %}
+output.logstash:
+  # The filebeat hosts
+  hosts: [ {{ '\"' + output['hosts']|join('\", \"') + '\"' }} ]
+  # Enable SSL support. SSL is automatically enabled, if any SSL setting is set.
+  ssl.enabled: true
+  # Configure SSL verification mode. If `none` is configured, all server hosts
+  # and certificates will be accepted. In this mode, SSL based connections are
+  # susceptible to man-in-the-middle attacks. Use only for testing. Default is
+  # `full`.
+  ssl.verification_mode: {{ ssl_config['verification_mode'] }}
+  # List of supported/valid TLS versions.
+  ssl.supported_protocols: [ {{ ssl_config['supported_protocols'] }} ]
+  # List of root certificates for HTTPS server verifications
+  ssl.certificate_authorities: [ "{{ssl_config['directory']}}/antsec.cacerts" ]
+  # Certificate for SSL client authentication
+  ssl.certificate: "{{ssl_config['directory']}}/certificate.crt"
+  # Client Certificate Key
+  ssl.key: "{{ssl_config['directory']}}/certificate.key"
+{% endif %}
+{% endif %}
+
+#================================ Logging =====================================
+# Sets log level. The default log level is info.
+# Available log levels are: critical, error, warning, info, debug
+#logging.level: debug
+# At debug level, you can selectively enable logging only for some components.
+# To enable all selectors use ["*"]. Examples of other selectors are "beat",
+# "publish", "service".
+#logging.selectors: ["*"]
+
+logging.metrics.period: 600s

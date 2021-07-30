@@ -1,0 +1,58 @@
+---
+
+- name: set fact force_install to no
+  set_fact: force_install=no
+
+- name: set fact force_install to yes
+  set_fact: force_install=yes
+  when: fb_allow_downgrades
+
+- name: Debian - Install apt-transport-https to support https APT downloads
+  become: true
+  apt: name=apt-transport-https state=present
+  when: fb_use_repository
+
+- name: Debian - Add Elastic repository key
+  become: true
+  apt_key: url="{{ fb_apt_key }}" state=present
+  when: fb_use_repository and fb_apt_key
+  tags: 
+    - no_apt
+
+- name: Debian - Add elastic repository
+  become: true
+  apt_repository: repo={{ item.repo }} state={{ item.state}}
+  with_items:
+    - { repo: "{{ fb_apt_url_old }}", state: "absent" }
+    - { repo: "{{ fb_apt_url }}", state: "present" }
+  when: fb_use_repository
+  tags: 
+    - no_apt
+
+- name: Debian - Remove version lock when upgrading
+  include: filebeat-Debian-version-unlock.yml
+  when: fb_upgrade
+
+- name: Debian - Ensure filebeat is installed
+  become: true
+  apt: name=filebeat{% if fb_version is defined and fb_version != "" %}={{ fb_version }}{% endif %} state=present force={{force_install}} allow_unauthenticated={{ 'no' if fb_apt_key else 'yes' }} cache_valid_time=86400
+  when: fb_use_repository
+  register: debian_filebeat_install_from_repo
+  notify: restart filebeat
+  tags: 
+    - no_apt
+
+- name: Debian - Include versionlock
+  include: filebeat-Debian-version-lock.yml
+  when: fb_version_lock
+
+- name: Debian - Download filebeat from url
+  get_url: url={% if fb_custom_package_url is defined %}{{ fb_custom_package_url }}{% else %}{{ fb_package_url }}-{{ fb_version }}.deb{% endif %} dest=/tmp/filebeat-{{ fb_version }}.deb validate_certs=no
+  when: not fb_use_repository
+
+- name: Debian - Ensure filebeat is installed from downloaded package
+  become: true
+  apt: deb=/tmp/filebeat-{{ fb_version }}.deb
+  when: not fb_use_repository
+  register: filebeat_install_from_package
+  notify: restart filebeat

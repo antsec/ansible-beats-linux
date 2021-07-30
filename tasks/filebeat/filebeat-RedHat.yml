@@ -1,0 +1,31 @@
+---
+- name: Ensure libselinux-python on CentOS 6.x
+  become: true
+  yum: name=libselinux-python state=present update_cache=yes
+  when: ( ansible_distribution == "CentOS" ) and ( ansible_distribution_major_version == "6" )
+
+- name: RedHat - add filebeat repo
+  become: true
+  template: src=elastic.repo.j2 dest=/etc/yum.repos.d/filebeat-{{ fb_major_version }}.repo
+  when: fb_use_repository
+
+- name: RedHat - include versionlock
+  include: filebeat-RedHat-version-lock.yml
+  when: fb_version_lock
+
+- name: RedHat - Install filebeat
+  become: true
+  yum: name=filebeat{% if fb_version is defined and fb_version != ""  %}-{{ fb_version }}{% endif %} state=present update_cache=yes
+  when: fb_use_repository
+  register: redhat_filebeat_install_from_repo
+  notify: restart filebeat
+  until: '"failed" not in redhat_filebeat_install_from_repo'
+  retries: 5
+  delay: 10
+
+- name: RedHat - Install filebeat from url
+  become: true
+  yum: name={% if fb_custom_package_url is defined %}{{ fb_custom_package_url }}{% else %}{{ fb_package_url }}-{{ fb_version }}.noarch.rpm{% endif %} state=present
+  when: not fb_use_repository
+  register: filebeat_install_from_package
+  notify: restart filebeat

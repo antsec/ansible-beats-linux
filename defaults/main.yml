@@ -1,0 +1,129 @@
+---
+enabled_collectors: 
+      - "filebeat"
+      - "packetbeat"
+      - "metricbeat"
+
+fb_major_version: "7.x"
+fb_version: "7.4.2"
+fb_version_lock: false
+fb_use_repository: true
+fb_apt_key: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+fb_apt_url: "deb https://artifacts.elastic.co/packages/{{ fb_major_version }}/apt stable main"
+fb_apt_url_old: "deb http://packages.elastic.co/elasticsearch/{{ fb_major_version }}/debian stable main"
+fb_start_service: true
+fb_restart_on_change: true
+fb_user: root
+fb_group: root
+#Need to provide default directories
+fb_pid_dir: "/var/run/filebeat"
+fb_conf_dir: "/etc/filebeat"
+fb_data_dirs: "/var/lib/filebeat"
+fb_log_dir: "/var/log/filebeat"
+fb_server_host: "localhost"
+fb_server_name: "localhost"
+fb_ssl_enabled: false
+fb_allow_downgrades: false
+fb_name: "collector"
+fb_docker_input: false
+fb_kubernetes_metadata: false
+
+pb_major_version: "7.x"
+pb_version: "7.4.2"
+pb_version_lock: false
+pb_use_repository: true
+pb_apt_key: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+pb_apt_url: "deb https://artifacts.elastic.co/packages/{{ pb_major_version }}/apt stable main"
+pb_apt_url_old: "deb http://packages.elastic.co/elasticsearch/{{ pb_major_version }}/debian stable main"
+pb_start_service: true
+pb_restart_on_change: true
+pb_user: root
+pb_group: root
+#Need to provide default directories
+pb_pid_dir: "/var/run/packetbeat"
+pb_conf_dir: "/etc/packetbeat"
+pb_data_dirs: "/var/lib/packetbeat"
+pb_log_dir: "/var/log/packetbeat"
+pb_server_host: "localhost"
+pb_server_name: "localhost"
+pb_ssl_enabled: false
+pb_allow_downgrades: false
+pb_name: "collector"
+
+mb_major_version: "7.x"
+mb_version: "7.4.2"
+mb_version_lock: false
+mb_upgrade: false
+mb_use_repository: true
+mb_apt_key: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+mb_apt_url: "deb https://artifacts.elastic.co/packages/{{ mb_major_version }}/apt stable main"
+mb_apt_url_old: "deb http://packages.elastic.co/elasticsearch/{{ mb_major_version }}/debian stable main"
+mb_start_service: true
+mb_restart_on_change: true
+mb_user: root
+mb_group: root
+#Need to provide default directories
+mb_pid_dir: "/var/run/metricbeat"
+mb_conf_dir: "/etc/metricbeat"
+mb_data_dirs: "/var/lib/metricbeat"
+mb_log_dir: "/var/log/metricbeat"
+mb_server_host: "localhost"
+mb_server_name: "localhost"
+mb_ssl_enabled: false
+mb_allow_downgrades: false
+mb_name: "collector"
+
+ab_major_version: "7.x"
+ab_version: "7.4.2"
+ab_version_lock: false
+ab_upgrade: false
+ab_use_repository: true
+ab_apt_key: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+ab_apt_url: "deb https://artifacts.elastic.co/packages/{{ ab_major_version }}/apt stable main"
+ab_apt_url_old: "deb http://packages.elastic.co/elasticsearch/{{ ab_major_version }}/debian stable main"
+ab_start_service: true
+ab_restart_on_change: true
+ab_user: root
+ab_group: root
+#Need to provide default directories
+ab_pid_dir: "/var/run/auditbeat"
+ab_conf_dir: "/etc/auditbeat"
+ab_data_dirs: "/var/lib/auditbeat"
+ab_log_dir: "/var/log/auditbeat"
+ab_server_host: "localhost"
+ab_server_name: "localhost"
+ab_ssl_enabled: false
+ab_allow_downgrades: false
+ab_name: "collector"
+
+# Since ansible 2.2 the following variables need to be defined
+# to allow the role to be conditionally played with a when condition.
+pid_dir: ''
+log_dir: ''
+conf_dir: ''
+data_dirs: ''
+# JVM custom parameters
+pb_jvm_custom_parameters: ''
+
+mb_system_period: 60s
+
+mb_nginx_host: http://127.0.0.1
+mb_nginx_period: 60s
+mb_nginx_server_status: server-status
+
+mb_mysql_period: 60s
+mb_mysql_host: root:secret@tcp(127.0.0.1:3306)/
+mb_mysql_username: root
+mb_mysql_password: secret
+
+mb_apache_period: 60s
+mb_apache_host: http://127.0.0.1
+mb_apache_server_status: server-status
+mb_apache_username: root
+mb_apache_password: secret
+
+mb_docker_host: unix:///var/run/docker.sock
+mb_docker_period: 60s
+
+mb_kubernetes_host: localhost:10255
+mb_kubernetes_period: 60s

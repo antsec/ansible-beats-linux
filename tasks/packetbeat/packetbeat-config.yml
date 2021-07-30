@@ -1,0 +1,34 @@
+---
+# Configure packetbeat Node
+
+#Create required directories
+# - name: Create Directories
+#   become: true
+#   file: path={{ item }} state=directory owner={{ pb_user }} group={{ pb_group }}
+#   with_items:
+#     - "{{pid_dir}}"
+#     - "{{log_dir}}"
+#     - "{{conf_dir}}"
+
+#Copy the config template
+- name: Copy Configuration File
+  become: true
+  template: src=packetbeat.yml.j2 dest={{conf_dir}}/packetbeat.yml owner={{ pb_user }} group={{ pb_group }} mode=0644 force=yes
+  register: system_change
+  notify: restart packetbeat
+
+- name: Create empty default environment file
+  become: true
+  changed_when: False
+  copy:
+    dest: /etc/default/packetbeat
+    content: ''
+  when: ansible_os_family == 'Debian'
+
+- name: Create empty default environment file
+  become: true
+  changed_when: False
+  copy:
+    dest: /etc/sysconfig/packetbeat
+    content: ''
+  when: ansible_os_family == 'RedHat'

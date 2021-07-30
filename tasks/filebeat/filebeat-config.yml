@@ -1,0 +1,41 @@
+---
+# Configure filebeat Node
+
+#Create required directories
+# - name: Create Directories
+#   become: true
+#   file: path={{ item }} state=directory owner={{ fb_user }} group={{ fb_group }}
+#   with_items:
+#     - "{{pid_dir}}"
+#     - "{{log_dir}}"
+#     - "{{conf_dir}}"
+
+#Copy the config template
+- name: Filebeat-config - Copy Configuration File
+  become: true
+  template: src=filebeat/filebeat.yml.j2 dest={{conf_dir}}/filebeat.yml owner={{ fb_user }} group={{ fb_group }} mode=0644 force=yes
+  register: system_change
+  notify: restart filebeat
+
+- name: Copy System Module Configuration File
+  become: true
+  template: src=filebeat/modules.d/system.yml.j2 dest={{conf_dir}}/modules.d/system.yml owner={{ fb_user }} group={{ fb_group }} mode=0644 force=yes
+  register: system_change
+  notify: restart filebeat
+  when: fb_system
+
+- name: Create empty default environment file
+  become: true
+  changed_when: False
+  copy:
+    dest: /etc/default/filebeat
+    content: ''
+  when: ansible_os_family == 'Debian'
+
+- name: Create empty default environment file
+  become: true
+  changed_when: False
+  copy:
+    dest: /etc/sysconfig/filebeat
+    content: ''
+  when: ansible_os_family == 'RedHat'

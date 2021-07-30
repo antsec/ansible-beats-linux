@@ -1,0 +1,3 @@
+---
+default_file: "/etc/default/filebeat"
+ls_home: "/usr/share/filebeat"

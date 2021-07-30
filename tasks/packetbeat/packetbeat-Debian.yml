@@ -1,0 +1,58 @@
+---
+
+- name: set fact force_install to no
+  set_fact: force_install=no
+
+- name: set fact force_install to yes
+  set_fact: force_install=yes
+  when: pb_allow_downgrades
+
+- name: Debian - Install apt-transport-https to support https APT downloads
+  become: true
+  apt: name=apt-transport-https state=present
+  when: pb_use_repository
+
+- name: Debian - Add Elastic repository key
+  become: true
+  apt_key: url="{{ pb_apt_key }}" state=present
+  when: pb_use_repository and pb_apt_key
+  tags: 
+    - no_apt
+
+- name: Debian - Add elastic repository
+  become: true
+  apt_repository: repo={{ item.repo }} state={{ item.state}}
+  with_items:
+    - { repo: "{{ pb_apt_url_old }}", state: "absent" }
+    - { repo: "{{ pb_apt_url }}", state: "present" }
+  when: pb_use_repository
+  tags: 
+    - no_apt
+
+- name: Debian - Remove version lock when upgrading
+  include: packetbeat-Debian-version-unlock.yml
+  when: pb_upgrade
+
+- name: Debian - Ensure packetbeat is installed
+  become: true
+  apt: name=packetbeat{% if pb_version is defined and pb_version != "" %}={{ pb_version }}{% endif %} state=present force={{force_install}} allow_unauthenticated={{ 'no' if pb_apt_key else 'yes' }} cache_valid_time=86400
+  when: pb_use_repository
+  register: debian_packetbeat_install_from_repo
+  notify: restart packetbeat
+  tags: 
+    - no_apt
+
+- name: Debian - Include versionlock
+  include: packetbeat-Debian-version-lock.yml
+  when: pb_version_lock
+
+- name: Debian - Download packetbeat from url
+  get_url: url={% if pb_custom_package_url is defined %}{{ pb_custom_package_url }}{% else %}{{ pb_package_url }}-{{ pb_version }}.deb{% endif %} dest=/tmp/packetbeat-{{ pb_version }}.deb validate_certs=no
+  when: not pb_use_repository
+
+- name: Debian - Ensure packetbeat is installed from downloaded package
+  become: true
+  apt: deb=/tmp/packetbeat-{{ pb_version }}.deb
+  when: not pb_use_repository
+  register: packetbeat_install_from_package
+  notify: restart packetbeat
