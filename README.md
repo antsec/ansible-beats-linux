@@ -76,7 +76,7 @@ Configure the default settings in your playbook:
     output:
       type: logstash
       hosts:
-        - "<host>:<port>"
+        - " {{ as_log_collectors }} "
     ssl_config:
       directory: "/etc/ssl/as-collectors"
       verification_mode: full
