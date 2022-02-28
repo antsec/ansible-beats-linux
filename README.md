@@ -14,6 +14,7 @@ Currently this works on Debian based linux systems. Tested platforms are:
 
 * Debian 9
 * Ubuntu 18.04.3 LTS
+* Ubuntu 20.04.4 LTS
 
 # Components
 The AntSec collector for Linux consists of 4 components.
@@ -49,14 +50,14 @@ Configure the default settings in your playbook:
     mb_version_lock: true 
     mb_upgrade: false
     mb_major_version: "7.x"
-    mb_version: "7.4.2"
+    mb_version: "7.17.1"
     mb_modules:
       - "system"
     fb_name: {{ beats_customer_id }}
     fb_version_lock: true
     fb_upgrade: false
     fb_major_version: "7.x"
-    fb_version: "7.4.2"
+    fb_version: "7.17.1"
     fb_system:
       enable_syslog: true
       enable_auth: true
@@ -64,12 +65,12 @@ Configure the default settings in your playbook:
     pb_version_lock: true
     pb_upgrade: false
     pb_major_version: "7.x"
-    pb_version: "7.4.2"
+    pb_version: "7.17.1"
     ab_name: {{ beats_customer_id }}
     ab_version_lock: true
     ab_upgrade: false
     ab_major_version: "7.x"
-    ab_version: "7.4.2"
+    ab_version: "7.17.1"
     ab_modules:
       - "auditd"
       - "file_integrity"
