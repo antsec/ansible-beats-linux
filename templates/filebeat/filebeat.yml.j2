@@ -13,6 +13,15 @@ filebeat.inputs:
     cri.parse_flags: true
 {% endif %}
 
+{% if fb_custom_input %}
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - {{ fb_custom_input['custom_path'] }}
+{% endif %}
+
+
 #============================= Filebeat modules ===============================
 
 filebeat.config.modules:
