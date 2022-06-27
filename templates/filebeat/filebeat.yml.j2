@@ -13,7 +13,7 @@ filebeat.inputs:
     cri.parse_flags: true
 {% endif %}
 
-{% if fb_custom_input %}
+{% if fb_custom_input is defined%}
 filebeat.inputs:
   - type: log
     enabled: true
