@@ -18,7 +18,9 @@ filebeat.inputs:
   - type: log
     enabled: true
     paths:
-      - {{ fb_custom_input['custom_path'] }}
+    {% for path in fb_custom_input['custom_paths'] %}
+    - {{ path }}
+    {% endfor %}
 {% endif %}
 
 
