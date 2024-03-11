@@ -16,7 +16,6 @@
 #   become: true
 #   apt_key: url="{{ pb_apt_key }}" state=present
 #   when: pb_use_repository and pb_apt_key
-#   validate_certs: false
 #   tags: 
 #     - no_apt
 
