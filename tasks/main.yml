@@ -4,31 +4,31 @@
   tags:
       - always
 
-- name: include prerequisites.yml
-  include: prerequisites.yml
-  tags:
-      - always
+# - name: include prerequisites.yml
+#   include: prerequisites.yml
+#   tags:
+#       - always
 
-- name: include filebeat-main.yml
-  include: filebeat/filebeat-main.yml
-  tags:
-      - filebeat
-  when: '"filebeat" in enabled_collectors'
+# - name: include filebeat-main.yml
+#   include: filebeat/filebeat-main.yml
+#   tags:
+#       - filebeat
+#   when: '"filebeat" in enabled_collectors'
 
-- name: include packetbeat-main.yml
-  include: packetbeat/packetbeat-main.yml
-  tags:
-      - packetbeat
-  when: '"packetbeat" in enabled_collectors'
+# - name: include packetbeat-main.yml
+#   include: packetbeat/packetbeat-main.yml
+#   tags:
+#       - packetbeat
+#   when: '"packetbeat" in enabled_collectors'
 
-- name: include metricbeat-main.yml
-  include: metricbeat/metricbeat-main.yml
-  tags:
-      - metricbeat
-  when: '"metricbeat" in enabled_collectors'
+# - name: include metricbeat-main.yml
+#   include: metricbeat/metricbeat-main.yml
+#   tags:
+#       - metricbeat
+#   when: '"metricbeat" in enabled_collectors'
 
-- name: include auditbeat-main.yml
-  include: auditbeat/auditbeat-main.yml
-  tags:
-      - auditbeat
-  when: '"auditbeat" in enabled_collectors'
+# - name: include auditbeat-main.yml
+#   include: auditbeat/auditbeat-main.yml
+#   tags:
+#       - auditbeat
+#   when: '"auditbeat" in enabled_collectors'
