@@ -12,12 +12,12 @@
   apt: name=apt-transport-https state=present
   when: pb_use_repository
 
-# - name: Debian - Add Elastic repository key
-#   become: true
-#   apt_key: url="{{ pb_apt_key }}" state=present
-#   when: pb_use_repository and pb_apt_key
-#   tags: 
-#     - no_apt
+- name: Debian - Add Elastic repository key
+  become: true
+  apt_key: url="{{ pb_apt_key }}" state=present
+  when: pb_use_repository and pb_apt_key
+  tags: 
+    - no_apt
 
 - name: Debian - Add elastic repository
   become: true
