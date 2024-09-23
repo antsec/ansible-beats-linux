@@ -1,22 +1,22 @@
 ---
 - name: check-set-parameters
-  include: packetbeat-parameters.yml
+  ansible.builtin.include_tasks: packetbeat-parameters.yml
   tags:
       - always
 
 - name: include packetbeat.yml
-  include: packetbeat.yml
+  ansible.builtin.include_tasks: packetbeat.yml
   tags:
       - install
 
 - name: include packetbeat-config.yml
-  include: packetbeat-config.yml
+  ansible.builtin.include_tasks: packetbeat-config.yml
   tags:
       - config
 
   #We always execute xpack as we may need to remove features
 - name: include packetbeat-ssl.yml
-  include: packetbeat-ssl.yml
+  ansible.builtin.include_tasks: packetbeat-ssl.yml
   tags:
       - ssl
 

@@ -10,7 +10,7 @@
   when: ab_use_repository
 
 - name: Auditbeat-RedHat - RedHat - include versionlock
-  include: auditbeat-RedHat-version-lock.yml
+  ansible.builtin.include_tasks: auditbeat-RedHat-version-lock.yml
   when: ab_version_lock
 
 - name: Auditbeat-RedHat - RedHat - Install auditbeat

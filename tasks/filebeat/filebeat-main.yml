@@ -1,22 +1,22 @@
 ---
 - name: check-set-parameters
-  include: filebeat-parameters.yml
+  ansible.builtin.include_tasks: filebeat-parameters.yml
   tags:
       - always
 
 - name: include filebeat.yml
-  include: filebeat.yml
+  ansible.builtin.include_tasks: filebeat.yml
   tags:
       - install
 
 - name: include filebeat-config.yml
-  include: filebeat-config.yml
+  ansible.builtin.include_tasks: filebeat-config.yml
   tags:
       - config
 
   #We always execute xpack as we may need to remove features
 - name: include filebeat-ssl.yml
-  include: filebeat-ssl.yml
+  ansible.builtin.include_tasks: filebeat-ssl.yml
   tags:
       - ssl
 

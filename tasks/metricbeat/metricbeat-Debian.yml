@@ -30,7 +30,7 @@
     - no_apt
 
 - name: Metricbeat-Debian - Debian - Remove version lock when upgrading
-  include: metricbeat-Debian-version-unlock.yml
+  ansible.builtin.include_tasks: metricbeat-Debian-version-unlock.yml
   when: mb_upgrade
 
 - name: Metricbeat-Debian - Debian - Ensure metricbeat is installed
@@ -43,7 +43,7 @@
     - no_apt
 
 - name: Metricbeat-Debian - Debian - Include versionlock
-  include: metricbeat-Debian-version-lock.yml
+  ansible.builtin.include_tasks: metricbeat-Debian-version-lock.yml
   when: mb_version_lock
 
 - name: Metricbeat-Debian - Debian - Download metricbeat from url

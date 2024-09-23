@@ -30,7 +30,7 @@
     - no_apt
 
 - name: Auditbeat-Debian - Debian - Remove version lock when upgrading
-  include: auditbeat-Debian-version-unlock.yml
+  ansible.builtin.include_tasks: auditbeat-Debian-version-unlock.yml
   when: ab_upgrade
 
 - name: Auditbeat-Debian - Debian - Ensure auditbeat is installed
@@ -43,7 +43,7 @@
     - no_apt
 
 - name: Auditbeat-Debian - Debian - Include versionlock
-  include: auditbeat-Debian-version-lock.yml
+  ansible.builtin.include_tasks: auditbeat-Debian-version-lock.yml
   when: ab_version_lock
 
 - name: Auditbeat-Debian - Debian - Download auditbeat from url

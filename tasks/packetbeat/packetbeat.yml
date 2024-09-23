@@ -2,12 +2,12 @@
 
 - name: Include optional user and group creation.
   when: (ls_user_id is defined) and (ls_group_id is defined)
-  include: packetbeat-optional-user.yml
+  ansible.builtin.include_tasks: packetbeat-optional-user.yml
 
 - name: Include specific packetbeat
-  include: packetbeat-Debian.yml
+  ansible.builtin.include_tasks: packetbeat-Debian.yml
   when: ansible_os_family == 'Debian'
 
 - name: Include specific packetbeat
-  include: packetbeat-RedHat.yml
+  ansible.builtin.include_tasks: packetbeat-RedHat.yml
   when: ansible_os_family == 'RedHat'

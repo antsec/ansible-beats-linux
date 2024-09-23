@@ -10,7 +10,7 @@
   when: fb_use_repository
 
 - name: RedHat - include versionlock
-  include: filebeat-RedHat-version-lock.yml
+  ansible.builtin.include_tasks: filebeat-RedHat-version-lock.yml
   when: fb_version_lock
 
 - name: RedHat - Install filebeat

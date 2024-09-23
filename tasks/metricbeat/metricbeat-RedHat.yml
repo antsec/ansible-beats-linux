@@ -10,7 +10,7 @@
   when: mb_use_repository
 
 - name: Metricbeat-RedHat - RedHat - include versionlock
-  include: metricbeat-RedHat-version-lock.yml
+  ansible.builtin.include_tasks: metricbeat-RedHat-version-lock.yml
   when: mb_version_lock
 
 - name: Metricbeat-RedHat - RedHat - Install metricbeat

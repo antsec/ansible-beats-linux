@@ -10,7 +10,7 @@
   when: pb_use_repository
 
 - name: RedHat - include versionlock
-  include: packetbeat-RedHat-version-lock.yml
+  ansible.builtin.include_tasks: packetbeat-RedHat-version-lock.yml
   when: pb_version_lock
 
 - name: RedHat - Install packetbeat

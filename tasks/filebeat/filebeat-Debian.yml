@@ -30,7 +30,7 @@
     - no_apt
 
 - name: Debian - Remove version lock when upgrading
-  include: filebeat-Debian-version-unlock.yml
+  ansible.builtin.include_tasks: filebeat-Debian-version-unlock.yml
   when: fb_upgrade
 
 - name: Debian - Ensure filebeat is installed
@@ -43,7 +43,7 @@
     - no_apt
 
 - name: Debian - Include versionlock
-  include: filebeat-Debian-version-lock.yml
+  ansible.builtin.include_tasks: filebeat-Debian-version-lock.yml
   when: fb_version_lock
 
 - name: Debian - Download filebeat from url
